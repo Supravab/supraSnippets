@@ -9,17 +9,22 @@ import (
 )
 
 func home(w http.ResponseWriter, r *http.Request) {
+	files := []string{
+		"./ui/html/base.tmpl",
+		"./ui/html/pages/home.tmpl",
+		"./ui/html/partials/nav.tmpl",
+	}
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
 		return
 	}
-	ts, err := template.ParseFiles("./ui/html/pages/home.tmpl")
+	ts, err := template.ParseFiles(files...)
 	if err != nil {
 		log.Print(error(err))
 		http.Error(w, "Internal server is having an issue", 500)
 		return
 	}
-	err = ts.Execute(w, nil)
+	err = ts.ExecuteTemplate(w, "base", nil)
 	if err != nil {
 		log.Print(error(err))
 		http.Error(w, "Execution Error", 500)
